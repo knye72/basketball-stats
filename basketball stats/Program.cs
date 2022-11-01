@@ -8,7 +8,9 @@ namespace basketball_stats
         static void Main(string[] args)
         {
             IBasketballDAO basketballDao = new BasketballSQLDao(@"Server=.\SQLEXPRESS;Database=basketballreference;Trusted_Connection=True;");
-            Console.WriteLine("Hello World!");
+
+            BasketballCLI cli = new BasketballCLI(basketballDao);
+            cli.RunCLI();
         }
     }
 }
