@@ -17,7 +17,7 @@ namespace basketball_stats.DAO
 
 
 
-        public IList<Player> GetPlayer(string playerName)
+        public IList<Player> GetPlayer(string userSearchTerm)
         {
             List<Player> playerList = new List<Player>();
             Player player = null;
@@ -25,8 +25,8 @@ namespace basketball_stats.DAO
             {
                 mySqlConn.Open();
 
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Basketballreference WHERE Player LIKE @search", mySqlConn);
-                string searchTerm = "%" + playerName + "%";
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Points WHERE Player LIKE @search", mySqlConn);
+                string searchTerm = "%" + userSearchTerm + "%";
 
                 cmd.Parameters.AddWithValue("@search", searchTerm);
 
@@ -43,6 +43,7 @@ namespace basketball_stats.DAO
 
         public void DeletePlayer(int rank)
         {
+
             Console.WriteLine("That dude is gone.");
         }
 
@@ -51,11 +52,29 @@ namespace basketball_stats.DAO
             Player player = new Player();
             player.Age = Convert.ToInt32(reader["Age"]);
             player.PlayerName = Convert.ToString(reader["Player"]);
-            player.FieldGoalPct = Convert.ToDecimal(reader["FGpercent"]);
-            player.ThreePointPct = Convert.ToDecimal(reader["3Ppercent"]);
+            if (reader["FG1"] is DBNull)
+            {
+                player.ThreePointPct = null;
+            }
+            else
+            {
+                player.FieldGoalPct = Convert.ToDecimal(reader["FG1"]);
+
+            }
+
+            //Converting database's null -> C# null
+            if (reader["_3P1"] is DBNull)
+            {
+                player.ThreePointPct = null;
+            }
+            else
+            {
+
+            player.ThreePointPct = Convert.ToDecimal(reader["_3P1"]);
+            }
             player.Rank = Convert.ToInt32(reader["Rk"]);
             player.Points = Convert.ToInt32(reader["PTS"]);
-            player.Team = Convert.ToString(reader["Team"]);
+            player.Team = Convert.ToString(reader["Tm"]);
 
             return player;
         }

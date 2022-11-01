@@ -1,8 +1,9 @@
 ﻿using basketball_stats.DAO;
+using basketball_stats.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Threading;
 
 namespace basketball_stats
 {
@@ -30,6 +31,7 @@ namespace basketball_stats
 
                 if (selection == 1)
                 {
+                    PromptForNameAndDisplayPlayerList();
 
                 }
 
@@ -37,13 +39,51 @@ namespace basketball_stats
                 if (selection == 2)
                 {
                     Console.Clear();
+                    Thread.Sleep(1000);
                     Console.WriteLine("Goodbye!");
+                    // By making running false, we close the program
                     running = false;
                 }
              
-         
             }
 
+        }
+
+        public void GettingPlayerInfo()
+        {
+            PromptForNameAndDisplayPlayerList();
+
+        }
+
+        //TO DO: split this method up (PromptForName & DisplayPlayerList)
+        private IList<Player> PromptForNameAndDisplayPlayerList()
+        {
+            while (true)
+            {
+                Console.WriteLine("Please enter any part of a player's name: ");
+                string response = Console.ReadLine();
+
+
+                // Before, if user puts in nothing and hits enter, program  lists out every player. Don't want that...
+                if (response == "")
+                {
+                    Console.WriteLine("You didn't put in anything. Try again");
+                    continue;
+                }
+
+                IList<Player> playerList = basketballDao.GetPlayer(response);
+
+                
+                if (playerList.Count == 0)
+                {
+                    Console.WriteLine("Woops, there are no players by that name!");
+                }
+                for (int i = 0; i < playerList.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}) - Name: {playerList[i].PlayerName}, Points: {playerList[i].Points}");
+                }
+
+            }
         }
 
 
